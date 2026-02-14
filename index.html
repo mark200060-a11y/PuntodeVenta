@@ -7,30 +7,28 @@
     <style>
         :root {
             --ios-bg: #F2F2F7;
-            --ios-card: rgba(255, 255, 255, 0.8);
+            --ios-card: #FFFFFF;
             --ios-blue: #007AFF;
             --ios-orange: #FF9500;
             --ios-red: #FF3B30;
             --ios-green: #34C759;
             --primary: #FF8C00;
-            --dark: #1C1C1E;
         }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
             margin: 0; 
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; 
+            font-family: -apple-system, system-ui, sans-serif; 
             background-color: var(--ios-bg); 
             height: 100vh; 
             display: flex; 
             flex-direction: column; 
-            overflow: hidden; 
-            color: var(--dark);
+            overflow: hidden;
         }
         
-        /* HEADER ESTILO IOS */
+        /* HEADER IOS STYLE */
         header { 
-            background: rgba(255, 140, 0, 0.9);
+            background: rgba(255, 140, 0, 0.95);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             color: white; 
@@ -38,153 +36,66 @@
             grid-template-columns: 80px 1fr 80px; 
             align-items: center; 
             height: 70px;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            z-index: 100;
             border-bottom: 0.5px solid rgba(0,0,0,0.1);
         }
-        .logo { grid-column: 2; font-size: 1.6rem; font-weight: 700; text-align: center; letter-spacing: -0.5px; }
+        .logo { grid-column: 2; font-size: 1.8rem; font-weight: 800; text-align: center; letter-spacing: -0.5px; }
         .menu-btn { 
-            grid-column: 3; 
-            justify-self: end; 
             background: rgba(255,255,255,0.2); 
-            color: white; 
-            border: none; 
-            padding: 8px 14px; 
-            border-radius: 18px; 
-            font-weight: 600; 
-            margin-right: 15px;
-            font-size: 0.9rem;
+            color: white; border: none; padding: 10px 15px; border-radius: 20px; font-weight: 600; cursor: pointer;
         }
 
         .main-container { display: flex; flex: 1; height: calc(100% - 70px); }
         
-        /* AREA PRODUCTOS */
+        /* PRODUCTOS AREA */
         .products-area { 
-            flex: 2; 
-            padding: 15px; 
-            overflow-y: auto; 
-            background: var(--ios-bg); 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
-            grid-auto-rows: 220px; 
-            gap: 15px; 
+            flex: 2; padding: 20px; overflow-y: auto; background: var(--ios-bg); 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); grid-auto-rows: 220px; gap: 20px; 
         }
         
         .product-card { 
-            background: white; 
-            border-radius: 22px; 
-            padding: 12px; 
-            display: flex; 
-            flex-direction: column; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            transition: all 0.2s ease;
-            border: 3px solid transparent; /* Reservado para alerta */
+            background: white; border-radius: 25px; padding: 15px; display: flex; flex-direction: column; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.2s; border: 3px solid transparent;
         }
-        
-        /* ALERTA DE INVENTARIO */
-        .out-of-stock { 
-            border-color: var(--ios-red) !important;
-            opacity: 0.8;
-            animation: shake 0.5s;
-        }
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-3px); }
-            50% { transform: translateX(3px); }
-            75% { transform: translateX(-3px); }
-            100% { transform: translateX(0); }
-        }
+        .product-card.out-of-stock { border-color: var(--ios-red) !important; opacity: 0.7; }
+        .product-card:active { transform: scale(0.96); }
+        .product-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 18px; margin-bottom: 10px; }
+        .prod-name { font-weight: 700; font-size: 1.05rem; color: #000; }
+        .prod-price { color: var(--ios-orange); font-weight: 800; font-size: 1.2rem; margin-top: auto; }
 
-        .product-card:active { transform: scale(0.96); background: #F2F2F7; }
-        .product-card img { width: 100%; height: 130px; object-fit: cover; border-radius: 14px; margin-bottom: 8px; }
-        .prod-name { font-weight: 600; font-size: 1rem; letter-spacing: -0.3px; color: #000; }
-        .prod-price { color: var(--ios-orange); font-weight: 700; font-size: 1.1rem; margin-top: auto; }
-
-        /* CARRITO ESTILO IOS */
+        /* CARRITO */
         .cart-area { 
-            flex: 1; 
-            background: white; 
-            border-left: 0.5px solid #D1D1D6; 
-            display: flex; 
-            flex-direction: column; 
-            padding: 20px; 
-            min-width: 350px; 
+            flex: 1; background: white; border-left: 0.5px solid #D1D1D6; 
+            display: flex; flex-direction: column; padding: 25px; min-width: 360px; 
         }
-        .cart-area h3 { font-size: 1.4rem; font-weight: 800; margin-top: 0; }
-        .cart-item { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 12px 0; 
-            border-bottom: 0.5px solid #E5E5EA; 
-            font-weight: 500;
-        }
+        .cart-list { flex: 1; overflow-y: auto; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; border-bottom: 0.5px solid #E5E5EA; }
         
-        .totals-area { 
-            background: #F2F2F7; 
-            padding: 20px; 
-            border-radius: 24px; 
-            margin-top: 15px;
-        }
-        .total-row { display: flex; justify-content: space-between; font-size: 1.6rem; font-weight: 800; margin-bottom: 15px; }
+        .totals-area { background: #F2F2F7; padding: 20px; border-radius: 24px; margin-top: 15px; }
+        .payment-input { width: 100%; padding: 15px; font-size: 1.5rem; border: none; border-radius: 15px; text-align: center; font-weight: 700; margin-bottom: 10px; }
         
-        .payment-input { 
-            width: 100%; 
-            padding: 16px; 
-            font-size: 1.4rem; 
-            border: none; 
-            border-radius: 14px; 
-            background: white; 
-            text-align: center;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-        
-        .action-btn { 
-            width: 100%; 
-            padding: 18px; 
-            border: none; 
-            border-radius: 16px; 
-            color: white; 
-            font-size: 1.1rem; 
-            font-weight: 700; 
-            margin-bottom: 10px; 
-            transition: opacity 0.2s;
-        }
-        .btn-pay { background: var(--ios-green); box-shadow: 0 4px 14px rgba(52, 199, 89, 0.3); opacity: 0.4; pointer-events: none;}
+        .action-btn { width: 100%; padding: 18px; border: none; border-radius: 18px; color: white; font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; cursor: pointer; }
+        .btn-pay { background: var(--ios-green); opacity: 0.5; pointer-events: none; }
         .btn-pay.active { opacity: 1; pointer-events: auto; }
-        .btn-credit { background: var(--ios-blue); box-shadow: 0 4px 14px rgba(0, 122, 255, 0.3); }
+        .btn-credit { background: var(--ios-blue); }
 
-        /* MODALES IOS */
-        .modal { display: none; position: fixed; inset: 0; background: var(--ios-bg); z-index: 100; flex-direction: column; animation: slideUp 0.3s ease-out; }
-        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-        .modal-header { 
-            padding: 20px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            font-weight: 800; 
-            font-size: 1.2rem;
-            background: white;
-            border-bottom: 0.5px solid #D1D1D6;
-        }
+        /* MODALES */
+        .modal { display: none; position: fixed; inset: 0; background: var(--ios-bg); z-index: 200; flex-direction: column; }
+        .modal-header { padding: 20px; display: flex; justify-content: space-between; align-items: center; background: white; border-bottom: 0.5px solid #D1D1D6; font-weight: 800; font-size: 1.3rem; }
+        .modal-content { flex: 1; overflow-y: auto; padding: 20px; }
 
-        /* TABLAS Y FORMULARIOS */
-        input, select { -webkit-appearance: none; border: 0.5px solid #D1D1D6; border-radius: 10px; padding: 12px; }
-        .qty-btn { width: 38px; height: 38px; border-radius: 12px; border: none; font-size: 1.4rem; font-weight: 600; color: white; }
+        /* TABLAS IOS */
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 20px; overflow: hidden; }
+        th, td { padding: 15px; text-align: left; border-bottom: 0.5px solid #F2F2F7; }
+        
+        /* BOTONES +/- */
+        .qty-controls { display: flex; align-items: center; gap: 10px; }
+        .qty-btn { width: 35px; height: 35px; border-radius: 10px; border: none; color: white; font-size: 1.2rem; font-weight: 700; cursor: pointer; }
 
-        .chart-container { 
-            height: 250px; 
-            background: white; 
-            border-radius: 20px; 
-            padding: 20px; 
-            display: flex; 
-            align-items: flex-end; 
-            justify-content: space-around;
-            box-shadow: inset 0 -2px 10px rgba(0,0,0,0.05);
-        }
-        .bar { width: 25px; border-radius: 6px; transition: height 0.6s cubic-bezier(0.17, 0.67, 0.83, 0.67); }
+        /* GRÁFICA */
+        .chart-container { height: 220px; background: white; border-radius: 20px; display: flex; align-items: flex-end; justify-content: space-around; padding: 15px; }
+        .bar { width: 25px; border-radius: 6px; transition: height 0.5s; position: relative; }
+        .bar-green { background: var(--ios-green); } .bar-red { background: var(--ios-red); }
     </style>
 </head>
 <body>
@@ -198,63 +109,97 @@
 <div class="main-container">
     <div class="products-area" id="productsGrid"></div>
     <div class="cart-area">
-        <h3>Tu Pedido</h3>
+        <h2 style="margin-top:0">Detalle</h2>
         <div class="cart-list" id="cartList"></div>
         <div class="totals-area">
-            <div class="total-row"><span>Total</span><span id="totalAmount">Q0.00</span></div>
-            <input type="number" id="payInput" class="payment-input" placeholder="¿Con cuánto paga?" oninput="calcChange()">
-            <div id="changeDisplay" style="text-align:center; margin-bottom:10px; font-weight:600; color:var(--ios-blue)">Cambio: Q0.00</div>
+            <div style="display:flex; justify-content:space-between; font-size:1.8rem; font-weight:900; margin-bottom:15px">
+                <span>Total</span><span id="totalAmount">Q0.00</span>
+            </div>
+            <input type="number" id="payInput" class="payment-input" placeholder="Pago con..." oninput="calcChange()">
+            <div id="changeDisplay" style="text-align:center; margin-bottom:15px; font-weight:700; color:var(--ios-blue)">Cambio: Q0.00</div>
             <button id="btnPay" class="action-btn btn-pay" onclick="processPayment('cash')">Cobrar 💵</button>
-            <button class="action-btn btn-credit" onclick="processPayment('credit')">Anotar Fiado 📝</button>
+            <button class="action-btn btn-credit" onclick="processPayment('credit')">Fiado 📝</button>
         </div>
     </div>
 </div>
 
 <div id="modalMenu" class="modal">
     <div class="modal-header"><span>Configuración</span><button class="menu-btn" style="background:var(--ios-red)" onclick="closeModal('modalMenu')">Cerrar</button></div>
-    <div class="menu-grid" style="padding:20px; gap:15px">
-        <button class="menu-option" style="background:var(--ios-orange)" onclick="openSection('modalGastos')">Gastos</button>
-        <button class="menu-option" style="background:var(--ios-blue)" onclick="openSection('modalFiado')">Fiados</button>
-        <button class="menu-option" style="background:#5856D6" onclick="openSection('modalHistorial')">Historial</button>
-        <button class="menu-option" style="background:var(--ios-green)" onclick="openSection('modalInventario')">Inventario</button>
+    <div class="modal-content" style="display:grid; grid-template-columns: 1fr 1fr; gap:20px">
+        <button class="menu-option" style="background:var(--ios-orange); color:white; padding:40px; border-radius:25px; border:none; font-size:1.5rem; font-weight:800" onclick="openSection('modalGastos')">Gastos 💸</button>
+        <button class="menu-option" style="background:var(--ios-blue); color:white; padding:40px; border-radius:25px; border:none; font-size:1.5rem; font-weight:800" onclick="openSection('modalFiado')">Fiado 📒</button>
+        <button class="menu-option" style="background:#5856D6; color:white; padding:40px; border-radius:25px; border:none; font-size:1.5rem; font-weight:800" onclick="openSection('modalHistorial')">Historial 📊</button>
+        <button class="menu-option" style="background:var(--ios-green); color:white; padding:40px; border-radius:25px; border:none; font-size:1.5rem; font-weight:800" onclick="openSection('modalInventario')">Inventario 📦</button>
     </div>
 </div>
 
 <div id="modalInventario" class="modal">
-    <div class="modal-header"><span>Inventario</span><button class="menu-btn" onclick="closeModal('modalInventario')">Volver</button></div>
-    <div class="modal-content" style="padding:20px; display:flex; flex-direction:column; gap:20px; overflow-y:auto">
-        <div style="background:white; padding:15px; border-radius:20px">
-            <h4>Materia Prima</h4>
-            <input type="text" id="invName" placeholder="Nombre" style="width:100%; margin-bottom:10px">
-            <input type="number" id="invQty" placeholder="Cant." style="width:100%; margin-bottom:10px">
-            <button class="action-btn" style="background:var(--dark)" onclick="addInventoryItem()">Agregar Material</button>
-            <table id="inventoryTable" style="width:100%; border-collapse:collapse; margin-top:15px"></table>
+    <div class="modal-header"><span>Inventario y Productos</span><button class="menu-btn" onclick="closeModal('modalInventario')">Volver</button></div>
+    <div class="modal-content" style="display:grid; grid-template-columns: 1fr 1.2fr; gap:20px">
+        <div style="background:white; padding:20px; border-radius:25px">
+            <h3>Materia Prima</h3>
+            <input type="text" id="invName" placeholder="Nombre" style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd">
+            <input type="number" id="invQty" placeholder="Cantidad" style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd; margin-top:10px">
+            <button class="action-btn" style="background:var(--dark); margin-top:15px" onclick="addInventoryItem()">Crear Material</button>
+            <table id="inventoryTable"></table>
         </div>
-        <div style="background:white; padding:15px; border-radius:20px">
-            <h4 id="formTitle">Nuevo Producto</h4>
-            <label style="background:var(--ios-bg); padding:10px; display:block; border-radius:12px; text-align:center; cursor:pointer" onclick="document.getElementById('prodImgInput').click()">📸 Elegir Foto</label>
-            <input type="file" id="prodImgInput" accept="image/*" style="display:none" onchange="previewProdImg(this)">
-            <img id="prodImgPreview" style="width:100px; height:100px; display:none; margin:10px auto; border-radius:15px; object-fit:cover">
+        <div style="background:white; padding:20px; border-radius:25px">
+            <h3 id="formTitle">Nuevo Producto</h3>
             <input type="hidden" id="editProdId">
-            <input type="text" id="prodName" placeholder="Nombre" style="width:100%; margin:10px 0">
-            <input type="number" id="prodPrice" placeholder="Precio Q" style="width:100%; margin-bottom:10px">
-            <div id="recipeChecklist" class="recipe-checklist"></div>
-            <button id="btnSaveProd" class="action-btn" style="background:var(--ios-orange)" onclick="saveProduct()">Guardar en Menú</button>
-            <table id="productsTable" style="width:100%; margin-top:15px"></table>
+            <label style="background:var(--ios-bg); padding:10px; border-radius:12px; display:block; text-align:center; cursor:pointer" onclick="document.getElementById('prodImgInput').click()">📷 Foto del Producto</label>
+            <input type="file" id="prodImgInput" accept="image/*" style="display:none" onchange="previewImg(this)">
+            <img id="preview" style="width:100px; height:100px; display:none; margin:10px auto; border-radius:15px; object-fit:cover">
+            <input type="text" id="prodName" placeholder="Nombre Producto" style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd; margin-top:10px">
+            <input type="number" id="prodPrice" placeholder="Precio Q" style="width:100%; padding:12px; border-radius:10px; border:1px solid #ddd; margin-top:10px">
+            <div id="recipeChecklist" style="margin-top:10px; max-height:150px; overflow:auto; background:#f9f9f9; padding:10px; border-radius:10px"></div>
+            <button id="btnSaveProd" class="action-btn" style="background:var(--ios-orange); margin-top:15px" onclick="saveProduct()">Guardar en Menú</button>
+            <button id="btnCancel" class="action-btn" style="background:grey; display:none" onclick="cancelEdit()">Cancelar</button>
+            <table id="productsTable" style="margin-top:20px"></table>
         </div>
     </div>
 </div>
 
-<div id="modalHistorial" class="modal">
-    <div class="modal-header"><span>Historial</span><button class="menu-btn" onclick="closeModal('modalHistorial')">Volver</button></div>
-    <div style="padding:20px; overflow-y:auto">
-        <button class="menu-btn" style="background:var(--dark); position:static; width:100%; margin-bottom:10px" onclick="clearAllData()">⚠️ BORRAR TODO EL HISTORIAL</button>
-        <div style="background:white; padding:20px; border-radius:20px; margin-bottom:20px">
-            <h3 id="todayDateLabel"></h3>
-            <div id="todayStats" style="font-size:1.2rem; font-weight:700"></div>
-            <div id="salesHistoryList" style="margin-top:15px"></div>
+<div id="modalGastos" class="modal">
+    <div class="modal-header"><span>Gastos</span><button class="menu-btn" onclick="closeModal('modalGastos')">Volver</button></div>
+    <div class="modal-content" style="display:grid; grid-template-columns: 1fr 1fr; gap:20px">
+        <div style="background:white; padding:20px; border-radius:25px">
+            <h3>Registrar Gasto</h3>
+            <input type="date" id="expDate" style="width:100%; padding:12px">
+            <input type="text" id="expDesc" placeholder="Descripción" style="width:100%; padding:12px; margin-top:10px">
+            <input type="number" id="expAmt" placeholder="Monto Q" style="width:100%; padding:12px; margin-top:10px">
+            <button class="action-btn" style="background:var(--ios-red); margin-top:15px" onclick="addExpense()">Guardar Gasto</button>
         </div>
-        <div class="chart-container" id="chartContainer"></div>
+        <div style="background:white; padding:20px; border-radius:25px">
+            <h3>Gastos de Hoy</h3>
+            <div id="expensesList"></div>
+        </div>
+    </div>
+</div>
+
+<div id="modalFiado" class="modal">
+    <div class="modal-header"><span>Fiados Pendientes</span><button class="menu-btn" onclick="closeModal('modalFiado')">Volver</button></div>
+    <div class="modal-content"><table id="creditTable"></table></div>
+</div>
+
+<div id="modalHistorial" class="modal">
+    <div class="modal-header"><span>Historial y Estadísticas</span><button class="menu-btn" onclick="closeModal('modalHistorial')">Volver</button></div>
+    <div class="modal-content">
+        <div style="display:flex; gap:10px; margin-bottom:20px">
+            <button class="menu-btn" style="background:var(--ios-green); color:white; position:static" onclick="exportToExcel()">Excel</button>
+            <button class="menu-btn" style="background:black; color:white; position:static" onclick="clearAllData()">⚠️ Borrar Todo</button>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px">
+            <div style="background:white; padding:20px; border-radius:25px">
+                <h3 id="histDate"></h3>
+                <div id="histStats" style="font-size:1.4rem; font-weight:800"></div>
+                <div id="histSalesList" style="margin-top:20px"></div>
+            </div>
+            <div style="background:white; padding:20px; border-radius:25px">
+                <div style="display:flex; justify-content:space-between"><h3>Semana</h3>
+                <div><button onclick="setChart('daily')">D</button><button onclick="setChart('weekly')">S</button></div></div>
+                <div class="chart-container" id="chart"></div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -268,157 +213,203 @@
     };
 
     function loadData() {
-        let saved = localStorage.getItem('antojableDB_v5');
+        let saved = localStorage.getItem('antojableDB_v5_full');
         if (saved) DB = JSON.parse(saved);
         renderProducts();
     }
-    function saveData() { localStorage.setItem('antojableDB_v5', JSON.stringify(DB)); }
+    function saveData() { localStorage.setItem('antojableDB_v5_full', JSON.stringify(DB)); }
 
-    // --- FUNCIÓN DE ALERTA DE INVENTARIO ---
-    function checkProductStock(p) {
+    function checkStock(p) {
         if (!p.recipeIds || p.recipeIds.length === 0) return true;
-        return p.recipeIds.every(rid => {
-            let item = DB.inventory.find(inv => inv.id == rid);
-            return item && item.qty > 0;
+        return p.recipeIds.every(id => {
+            let inv = DB.inventory.find(i => i.id == id);
+            return inv && inv.qty > 0;
         });
     }
 
     function renderProducts() {
         const grid = document.getElementById('productsGrid'); grid.innerHTML = '';
         DB.products.forEach(p => {
-            const hasStock = checkProductStock(p);
-            const card = document.createElement('div'); 
-            card.className = `product-card ${hasStock ? '' : 'out-of-stock'}`;
-            
+            const stock = checkStock(p);
+            const card = document.createElement('div');
+            card.className = `product-card ${stock ? '' : 'out-of-stock'}`;
             card.innerHTML = `
-                ${p.image ? `<img src="${p.image}">` : `<div style="height:130px; background:#E5E5EA; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:3rem">🍔</div>`}
+                ${p.image ? `<img src="${p.image}">` : `<div style="height:120px; background:#E5E5EA; border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:3rem">🍔</div>`}
                 <div class="prod-name">${p.name}</div>
-                <div class="prod-price">${hasStock ? 'Q' + p.price : '¡SIN STOCK!'}</div>
+                <div class="prod-price">${stock ? 'Q' + p.price : 'SIN STOCK'}</div>
             `;
-            
-            if(hasStock) {
-                card.onclick = () => { cart.push({...p, cId: Date.now()}); renderCart(); };
-            } else {
-                card.onclick = () => alert("⚠️ No puedes vender este producto porque te faltan ingredientes en el inventario.");
-            }
+            if(stock) card.onclick = () => { cart.push({...p, cId: Date.now()}); renderCart(); };
             grid.appendChild(card);
         });
     }
 
-    // --- RESTO DE FUNCIONES (SISTEMA FULL) ---
     function renderCart() {
         const list = document.getElementById('cartList'); list.innerHTML = '';
         let total = 0;
         cart.forEach(i => {
             total += parseFloat(i.price);
-            list.innerHTML += `<div class="cart-item"><span>${i.name}</span><span>Q${i.price} <button style="border:none; background:none; color:var(--ios-red); font-weight:700" onclick="removeItem(${i.cId})">Eliminar</button></span></div>`;
+            list.innerHTML += `<div class="cart-item"><span>${i.name}</span><span>Q${i.price} <button style="border:none; background:none; color:var(--ios-red)" onclick="removeFromCart(${i.cId})">X</button></span></div>`;
         });
         document.getElementById('totalAmount').innerText = `Q${total.toFixed(2)}`;
         calcChange();
     }
-    function removeItem(id) { cart = cart.filter(i => i.cId !== id); renderCart(); }
+    function removeFromCart(id) { cart = cart.filter(i => i.cId !== id); renderCart(); }
 
     function calcChange() {
         let t = cart.reduce((s, i) => s + parseFloat(i.price), 0);
         let p = parseFloat(document.getElementById('payInput').value) || 0;
         let b = document.getElementById('btnPay');
         if (t > 0 && p >= t) { b.classList.add('active'); document.getElementById('changeDisplay').innerText = `Cambio: Q${(p-t).toFixed(2)}`; }
-        else { b.classList.remove('active'); document.getElementById('changeDisplay').innerText = "Falta efectivo"; }
+        else { b.classList.remove('active'); document.getElementById('changeDisplay').innerText = "Falta dinero"; }
     }
 
     function processPayment(type) {
         let t = cart.reduce((s, i) => s + parseFloat(i.price), 0); if (t === 0) return;
         let now = new Date();
+        let ticketMsg = `*¡Se te Antoja! 😋*%0A---%0A`;
+        cart.forEach(i => ticketMsg += `• ${i.name}: Q${i.price}%0A`);
+        ticketMsg += `---%0A*Total: Q${t.toFixed(2)}*%0A%0A_¡Gracias por elegirnos! Tu antojo es nuestra misión. 😋✨_`;
+
         if (type === 'credit') {
             let n = prompt("Nombre del Cliente:"); if (!n) return;
-            DB.credits.push({ id: Date.now(), dIso: now.toISOString(), dYMD: getLocalYMD(now), name: n, t: t });
+            DB.credits.push({ id: Date.now(), dIso: now.toISOString(), dYMD: getLocalYMD(now), name: n, t: t, items: [...cart] });
         } else {
-            cart.forEach(p => { if (p.recipeIds) p.recipeIds.forEach(rid => { let inv = DB.inventory.find(iv => iv.id == rid); if (inv) inv.qty--; })});
+            cart.forEach(p => { if (p.recipeIds) p.recipeIds.forEach(id => { let i = DB.inventory.find(inv => inv.id == id); if(i) i.qty--; })});
             DB.sales.push({ id: Date.now(), dIso: now.toISOString(), dYMD: getLocalYMD(now), t: t });
         }
-        saveData(); cart = []; document.getElementById('payInput').value = ''; renderCart(); renderProducts(); alert("¡Venta Exitosa!");
+        
+        saveData();
+        if(confirm("¿Enviar ticket por WhatsApp?")) {
+            window.open(`https://wa.me/?text=${ticketMsg}`);
+        }
+        cart = []; document.getElementById('payInput').value = ''; renderCart(); renderProducts(); alert("¡Venta Exitosa!");
     }
 
+    // INVENTARIO
     function addInventoryItem() {
         let n = document.getElementById('invName').value; let q = parseInt(document.getElementById('invQty').value) || 0;
         if (!n) return; DB.inventory.push({ id: Date.now(), name: n, qty: q });
-        saveData(); renderInventoryTable(); updateRecipeChecklist(); renderProducts();
+        saveData(); renderInv(); updateRecipe(); document.getElementById('invName').value=''; document.getElementById('invQty').value='';
     }
-    function renderInventoryTable() {
-        const tb = document.getElementById('inventoryTable'); tb.innerHTML = '';
+    function renderInv() {
+        const tb = document.getElementById('inventoryTable'); tb.innerHTML = '<thead><tr><th>Mat.</th><th>Stock</th><th>X</th></tr></thead>';
         DB.inventory.forEach(i => {
-            tb.innerHTML += `<tr style="border-bottom:0.5px solid #eee">
-                <td style="padding:10px 0">${i.name}</td>
-                <td><button class="qty-btn" style="background:var(--ios-red)" onclick="adjInv(${i.id},-1)">-</button>
-                    <span style="font-weight:700; margin:0 10px">${i.qty}</span>
-                    <button class="qty-btn" style="background:var(--ios-green)" onclick="adjInv(${i.id},1)">+</button></td>
-                <td><button onclick="delInv(${i.id})" style="border:none; background:none">🗑️</button></td></tr>`;
+            let tr = document.createElement('tr');
+            tr.innerHTML = `<td>${i.name}</td><td><div class="qty-controls">
+                <button class="qty-btn" style="background:var(--ios-red)" onclick="adjInv(${i.id},-1)">-</button>
+                <span>${i.qty}</span>
+                <button class="qty-btn" style="background:var(--ios-green)" onclick="adjInv(${i.id},1)">+</button></div></td>
+                <td><button onclick="delInv(${i.id})">❌</button></td>`;
+            tb.appendChild(tr);
         });
     }
-    function adjInv(id, n) { let i = DB.inventory.find(x => x.id == id); if (i) { i.qty += n; if (i.qty < 0) i.qty = 0; saveData(); renderInventoryTable(); renderProducts(); } }
-    function delInv(id) { if(confirm("¿Borrar?")) { DB.inventory = DB.inventory.filter(i => i.id !== id); saveData(); renderInventoryTable(); renderProducts(); } }
+    function adjInv(id, n) { let i = DB.inventory.find(x => x.id == id); if (i) { i.qty += n; saveData(); renderInv(); renderProducts(); } }
+    function delInv(id) { if(confirm("Borrar?")) { DB.inventory = DB.inventory.filter(i => i.id != id); saveData(); renderInv(); updateRecipe(); } }
 
-    function previewProdImg(f) {
-        let r = new FileReader(); r.onload = e => { currentImg = e.target.result; document.getElementById('prodImgPreview').src = currentImg; document.getElementById('prodImgPreview').style.display='block'; };
+    // PRODUCTOS
+    function previewImg(f) {
+        let r = new FileReader(); r.onload = e => { currentImg = e.target.result; document.getElementById('preview').src = currentImg; document.getElementById('preview').style.display='block'; };
         r.readAsDataURL(f.files[0]);
     }
     function saveProduct() {
         let n = document.getElementById('prodName').value; let p = parseFloat(document.getElementById('prodPrice').value);
         let rIds = Array.from(document.querySelectorAll('#recipeChecklist input:checked')).map(c => parseInt(c.value));
-        if (!n || !p) return;
-        let editId = document.getElementById('editProdId').value;
-        if (editId) {
-            let idx = DB.products.findIndex(x => x.id == editId);
-            DB.products[idx] = { id: parseInt(editId), name: n, price: p, recipeIds: rIds, image: currentImg };
+        if(!n || !p) return;
+        let eid = document.getElementById('editProdId').value;
+        if(eid) {
+            let idx = DB.products.findIndex(x => x.id == eid);
+            DB.products[idx] = { id: parseInt(eid), name: n, price: p, recipeIds: rIds, image: currentImg };
         } else {
             DB.products.push({ id: Date.now(), name: n, price: p, recipeIds: rIds, image: currentImg });
         }
-        saveData(); cancelEdit(); renderProductsTable(); renderProducts();
+        saveData(); cancelEdit(); renderProdTable(); renderProducts();
     }
-    function renderProductsTable() {
-        const tb = document.getElementById('productsTable'); tb.innerHTML = '';
+    function renderProdTable() {
+        const tb = document.getElementById('productsTable'); tb.innerHTML = '<thead><tr><th>Prod.</th><th>Q</th><th>Acción</th></tr></thead>';
         DB.products.forEach(p => {
-            tb.innerHTML += `<tr><td>${p.name}</td><td>Q${p.price}</td><td><button onclick="editProd(${p.id})">✏️</button></td></tr>`;
+            tb.innerHTML += `<tr><td>${p.name}</td><td>Q${p.price}</td><td><button onclick="editProd(${p.id})">✏️</button> <button onclick="delProd(${p.id})">🗑️</button></td></tr>`;
+        });
+    }
+    function delProd(id) { if(confirm("¿Borrar producto?")) { DB.products = DB.products.filter(p => p.id != id); saveData(); renderProdTable(); renderProducts(); } }
+    function editProd(id) {
+        let p = DB.products.find(x => x.id == id); document.getElementById('editProdId').value = p.id;
+        document.getElementById('prodName').value = p.name; document.getElementById('prodPrice').value = p.price;
+        document.getElementById('formTitle').innerText = "Editando..."; document.getElementById('btnCancel').style.display='block';
+        currentImg = p.image; if(p.image) { document.getElementById('preview').src = p.image; document.getElementById('preview').style.display='block'; }
+    }
+    function cancelEdit() { document.getElementById('editProdId').value = ''; document.getElementById('formTitle').innerText="Nuevo"; document.getElementById('btnCancel').style.display='none'; document.getElementById('prodName').value=''; document.getElementById('prodPrice').value=''; document.getElementById('preview').style.display='none'; currentImg=null; }
+
+    // GASTOS
+    function addExpense() {
+        let d = document.getElementById('expDate').value || getLocalYMD();
+        let ds = document.getElementById('expDesc').value; let a = parseFloat(document.getElementById('expAmt').value);
+        if(!ds || !a) return; DB.expenses.push({ id: Date.now(), dateYMD: d, desc: ds, amount: a });
+        saveData(); renderExpenses(); document.getElementById('expDesc').value=''; document.getElementById('expAmt').value='';
+    }
+    function renderExpenses() {
+        let l = document.getElementById('expensesList'); l.innerHTML = '';
+        DB.expenses.filter(e => e.dateYMD == getLocalYMD()).forEach(e => {
+            l.innerHTML += `<div style="padding:10px; border-bottom:1px solid #eee"><b>Q${e.amount}</b> - ${e.desc}</div>`;
         });
     }
 
+    // HISTORIAL
+    function setChart(m) { chartMode = m; calcStats(); }
     function calcStats() {
-        let today = getLocalYMD(); document.getElementById('todayDateLabel').innerText = "Hoy: " + today;
-        let sT = DB.sales.filter(s => s.dYMD === today);
-        let sumS = sT.reduce((a, b) => a + b.t, 0);
-        document.getElementById('todayStats').innerText = `Total Ventas Hoy: Q${sumS.toFixed(2)}`;
+        let tYMD = getLocalYMD(); document.getElementById('histDate').innerText = tYMD;
+        let salesT = DB.sales.filter(s => s.dYMD == tYMD);
+        let sumS = salesT.reduce((a, b) => a + b.t, 0);
+        let sumE = DB.expenses.filter(e => e.dateYMD == tYMD).reduce((a, b) => a + b.amount, 0);
+        document.getElementById('histStats').innerText = `Venta: Q${sumS.toFixed(2)} | Gasto: Q${sumE.toFixed(2)} | Neto: Q${(sumS-sumE).toFixed(2)}`;
         
-        const cont = document.getElementById('chartContainer'); cont.innerHTML = '';
+        const cont = document.getElementById('chart'); cont.innerHTML = '';
         let dps = [];
-        for (let i = 4; i >= 0; i--) {
-            let d = new Date(); d.setDate(d.getDate() - i); let y = getLocalYMD(d);
-            let ds = DB.sales.filter(x => x.dYMD === y).reduce((a, b) => a + b.t, 0);
-            dps.push({ l: d.toLocaleDateString('es-GT',{weekday:'short'}), s: ds });
+        if(chartMode == 'daily') dps.push({ l: 'HOY', s: sumS });
+        else {
+            for(let i=6; i>=0; i--) {
+                let d = new Date(); d.setDate(d.getDate()-i); let y = getLocalYMD(d);
+                let ds = DB.sales.filter(x => x.dYMD == y).reduce((a, b) => a + b.t, 0);
+                dps.push({ l: d.toLocaleDateString('es-GT',{weekday:'short'}), s: ds });
+            }
         }
         let max = Math.max(...dps.map(x => x.s), 100);
         dps.forEach(d => {
-            let sH = (d.s/max)*100;
-            cont.innerHTML += `<div style="display:flex; flex-direction:column; align-items:center">
-                <div class="bar bar-green" style="height:${Math.max(sH,5)}%"></div>
-                <span style="font-size:0.7rem; font-weight:700; margin-top:5px">${d.l}</span></div>`;
+            cont.innerHTML += `<div style="display:flex; flex-direction:column; align-items:center"><div class="bar bar-green" style="height:${(d.s/max)*100}%"></div><span style="font-size:0.7rem">${d.l}</span></div>`;
         });
     }
 
-    function clearAllData() { if (confirm("⚠️ ¿Borrar historial?")) { DB.sales = []; DB.expenses = []; saveData(); calcStats(); alert("Borrado"); } }
+    function clearAllData() { if(confirm("Borrar historial?")) { DB.sales=[]; DB.expenses=[]; DB.credits=[]; saveData(); calcStats(); alert("Borrado"); }}
 
     function openMenu() { document.getElementById('modalMenu').style.display='flex'; }
     function closeModal(id) { document.getElementById(id).style.display='none'; }
     function openSection(id) {
         closeModal('modalMenu'); document.getElementById(id).style.display='flex';
-        if(id==='modalInventario'){ renderInventoryTable(); renderProductsTable(); updateRecipeChecklist(); }
-        if(id==='modalHistorial') calcStats();
+        if(id=='modalInventario'){ renderInv(); renderProdTable(); updateRecipe(); cancelEdit(); }
+        if(id=='modalHistorial') calcStats();
+        if(id=='modalGastos'){ document.getElementById('expDate').value = getLocalYMD(); renderExpenses(); }
+        if(id=='modalFiado') renderCredits();
     }
-    function updateRecipeChecklist() {
+    function updateRecipe() {
         let c = document.getElementById('recipeChecklist'); c.innerHTML = '';
-        DB.inventory.forEach(i => { c.innerHTML += `<label style="display:block; padding:8px; border-bottom:0.5px solid #eee"><input type="checkbox" value="${i.id}"> ${i.name}</label>`; });
+        DB.inventory.forEach(i => { c.innerHTML += `<label style="display:block; padding:8px; border-bottom:1px solid #eee"><input type="checkbox" value="${i.id}"> ${i.name}</label>`; });
     }
-    function editProd(id) { let p = DB.products.find(x => x.id == id); document.getElementById('editProdId').value = p.id; document.getElementById('prodName').value = p.name; document.getElementById('prodPrice').value = p.price; currentImg = p.image; }
-    function cancelEdit() { document.getElementById('editProdId').value = ''; document.getElementById('prodName').value=''; document.getElementById('prodPrice').value=''; currentImg=null; }
+    function renderCredits() {
+        let tb = document.getElementById('creditTable'); tb.innerHTML = '<thead><tr><th>Fecha</th><th>Nombre</th><th>Q</th><th>Acción</th></tr></thead>';
+        DB.credits.forEach(c => {
+            tb.innerHTML += `<tr><td>${c.dYMD}</td><td>${c.name}</td><td>Q${c.t}</td><td><button onclick="payCredit(${c.id})">Cobrar</button></td></tr>`;
+        });
+    }
+    function payCredit(id) {
+        let c = DB.credits.find(x => x.id == id); let now = new Date();
+        DB.sales.push({ id: Date.now(), dIso: now.toISOString(), dYMD: getLocalYMD(now), t: c.t });
+        DB.credits = DB.credits.filter(x => x.id != id); saveData(); renderCredits(); alert("Cobrado!");
+    }
+
+    function exportToExcel() {
+        let csv = "Fecha,Hora,Tipo,Monto\n";
+        DB.sales.forEach(s => { let d = new Date(s.dIso); csv += `${d.toLocaleDateString()},${d.toLocaleTimeString()},VENTA,${s.t}\n`; });
+        let link = document.createElement('a'); link.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv); link.download = 'ventas.csv'; link.click();
+    }
 
     loadData();
 </script>
