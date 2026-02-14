@@ -1,0 +1,776 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>¡Se te Antoja! 😋</title>
+    <style>
+        :root {
+            --primary: #FF8C00; /* Naranja antojable */
+            --secondary: #FFD700; /* Amarillo queso/pan */
+            --accent: #D32F2F; /* Rojo salsa/carne */
+            --dark: #333;
+            --light: #f4f4f4;
+            --green: #2ecc71;
+            --blue: #3498db;
+        }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--light); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* HEADER 4.0 (CENTRADO PERFECTO CON GRID) */
+        header { 
+            background: var(--primary); 
+            color: white; 
+            padding: 0 15px;
+            display: grid; 
+            grid-template-columns: 80px 1fr 80px; /* Izq (vacio), Centro (Logo), Der (Menu) */
+            align-items: center; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+            height: 70px;
+        }
+        
+        .logo { 
+            grid-column: 2; /* Va en medio */
+            font-size: 1.8rem; 
+            font-weight: 900; 
+            text-align: center;
+            white-space: nowrap;
+        }
+        
+        .menu-btn { 
+            grid-column: 3; /* Va a la derecha */
+            justify-self: end;
+            background: white; 
+            color: var(--primary); 
+            border: none; 
+            padding: 8px 15px; 
+            border-radius: 20px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-size: 1rem;
+        }
+
+        /* LAYOUT PRINCIPAL */
+        .main-container { display: flex; flex: 1; height: calc(100% - 70px); }
+        
+        /* IZQUIERDA - PRODUCTOS */
+        .products-area { flex: 2; padding: 10px; overflow-y: auto; background: #fff5e6; display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); grid-auto-rows: 200px; gap: 10px; align-content: start; }
+        
+        .product-card { background: white; border-radius: 15px; padding: 10px; display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.1s; border: 2px solid transparent; overflow: hidden; position: relative; }
+        .product-card:active { transform: scale(0.95); border-color: var(--primary); }
+        .product-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 10px 10px 0 0; margin-bottom: 5px; }
+        .prod-info { flex: 1; display: flex; flex-direction: column; justify-content: center; width: 100%; }
+        .prod-name { font-weight: bold; font-size: 0.95rem; margin-bottom: 2px; color: var(--dark); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.1; }
+        .prod-price { color: var(--accent); font-weight: bold; font-size: 1.2rem; margin-top: auto; }
+
+        /* DERECHA - CARRITO/DETALLE */
+        .cart-area { flex: 1; background: white; display: flex; flex-direction: column; border-left: 1px solid #ddd; padding: 10px; min-width: 320px; }
+        
+        .cart-list { flex: 1; overflow-y: auto; margin-bottom: 10px; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; }
+        .del-btn { color: red; background: none; border: none; font-size: 1.2rem; cursor: pointer; padding: 0 10px; }
+        
+        .totals-area { background: var(--light); padding: 15px; border-radius: 10px; }
+        .total-row { display: flex; justify-content: space-between; font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; }
+        
+        .payment-input { width: 100%; padding: 15px; font-size: 1.5rem; text-align: center; border: 2px solid #ddd; border-radius: 10px; margin-bottom: 10px; }
+        .change-display { text-align: center; font-size: 1.2rem; color: var(--dark); margin-bottom: 10px; font-weight: bold; }
+        
+        .action-btn { width: 100%; padding: 15px; border: none; border-radius: 10px; color: white; font-size: 1.2rem; font-weight: bold; margin-bottom: 10px; cursor: pointer; }
+        .btn-pay { background: var(--green); opacity: 0.5; pointer-events: none; }
+        .btn-pay.active { opacity: 1; pointer-events: auto; }
+        .btn-credit { background: var(--blue); }
+
+        /* MODALES */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 100; flex-direction: column; }
+        .modal-header { background: var(--dark); color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .modal-content { padding: 20px; overflow-y: auto; flex: 1; }
+        
+        /* NAVEGACIÓN MENU */
+        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; padding: 20px; }
+        .menu-option { background: var(--primary); color: white; padding: 30px; border-radius: 15px; font-size: 1.5rem; font-weight: bold; text-align: center; border: none; cursor: pointer; }
+
+        /* ESTILOS ESPECÍFICOS SECCIONES */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input[type="text"], .form-group input[type="number"], .form-group input[type="date"], .form-group select { width: 100%; padding: 10px; font-size: 1rem; border: 1px solid #ccc; border-radius: 5px; }
+        .file-upload-btn { display: inline-block; padding: 10px 15px; background: #ddd; border-radius: 5px; cursor: pointer; margin-bottom: 10px; font-weight: bold; width: 100%; text-align: center;}
+
+        /* Lista de Ingredientes (Checkboxes) */
+        .recipe-checklist { max-height: 150px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; border-radius: 5px; background: #f9f9f9; }
+        .recipe-checklist label { display: flex; align-items: center; padding: 8px 0; font-weight: normal; cursor: pointer; border-bottom: 1px solid #eee; }
+        .recipe-checklist input[type="checkbox"] { margin-right: 15px; transform: scale(1.5); }
+        
+        /* Tablas */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; vertical-align: middle; }
+        th { background: #f0f0f0; font-size: 0.9rem; }
+        td { font-size: 1rem; }
+
+        /* Botones Inventario +/- MEJORADOS */
+        .qty-controls { display: flex; align-items: center; gap: 5px; }
+        .qty-btn { width: 35px; height: 35px; border-radius: 8px; border: none; font-weight: bold; font-size: 1.4rem; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        .btn-plus { background: var(--green); color: white; }
+        .btn-minus { background: var(--accent); color: white; }
+        .qty-display { font-weight: bold; font-size: 1.2rem; display: inline-block; min-width: 30px; text-align: center; }
+
+        /* Botones Tabla Productos */
+        .btn-edit { background: #3498db; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; margin-right: 5px; }
+        .btn-del { background: #e74c3c; color: white; padding: 5px 10px; border: none; border-radius: 5px; cursor: pointer; }
+
+        /* Split Screen */
+        .split-view { display: flex; height: 100%; gap: 20px; flex-direction: column; }
+        @media (min-width: 768px) { .split-view { flex-direction: row; } }
+        .split-left, .split-right { flex: 1; overflow-y: auto; padding-bottom: 20px; }
+
+        /* Gráficas CSS */
+        .chart-container { height: 250px; display: flex; align-items: flex-end; justify-content: space-around; margin-top: 20px; background: #fff; border-bottom: 2px solid #333; padding-bottom: 5px; }
+        .bar-group { display: flex; flex-direction: column; align-items: center; width: 25%; }
+        .bar { width: 100%; transition: height 0.5s; display: flex; align-items: flex-end; justify-content: center; color: white; font-weight: bold; font-size: 0.8rem; border-radius: 5px 5px 0 0; min-height: 1px; }
+        .bar-green { background: var(--green); }
+        .bar-blue { background: var(--blue); }
+        .bar-red { background: var(--accent); }
+
+        .net-indicator { font-size: 2rem; margin-top: 10px; text-align: center; }
+        .arrow-up { color: var(--green); }
+        .arrow-down { color: var(--accent); }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <div></div> <div class="logo">¡Se te Antoja! 😋</div>
+    <button class="menu-btn" onclick="openMenu()">MENÚ ☰</button>
+</header>
+
+<div class="main-container">
+    <div class="products-area" id="productsGrid">
+        </div>
+
+    <div class="cart-area">
+        <h3>Detalle de Venta</h3>
+        <div class="cart-list" id="cartList">
+            </div>
+
+        <div class="totals-area">
+            <div class="total-row">
+                <span>Total:</span>
+                <span id="totalAmount">Q0.00</span>
+            </div>
+            
+            <input type="number" id="payInput" class="payment-input" placeholder="¿Con cuánto paga?" oninput="calcChange()">
+            <div class="change-display" id="changeDisplay">Cambio: Q0.00</div>
+            
+            <button id="btnPay" class="action-btn btn-pay" onclick="processPayment('cash')">COBRAR 💵</button>
+            <button class="action-btn btn-credit" onclick="processPayment('credit')">FIADO 📝</button>
+        </div>
+    </div>
+</div>
+
+<div id="modalMenu" class="modal">
+    <div class="modal-header">
+        <span>Menú Principal</span>
+        <button class="menu-btn" style="position:static" onclick="closeModal('modalMenu')">Cerrar X</button>
+    </div>
+    <div class="modal-content menu-grid">
+        <button class="menu-option" style="background:#e67e22" onclick="openSection('modalGastos')">GASTOS 💸</button>
+        <button class="menu-option" style="background:#3498db" onclick="openSection('modalFiado')">FIADO 📒</button>
+        <button class="menu-option" style="background:#9b59b6" onclick="openSection('modalHistorial')">HISTORIAL 📊</button>
+        <button class="menu-option" style="background:#27ae60" onclick="openSection('modalInventario')">INVENTARIO / RECETARIO 📦</button>
+    </div>
+</div>
+
+<div id="modalInventario" class="modal">
+    <div class="modal-header">
+        <span>Inventario y Recetario</span>
+        <button class="menu-btn" style="position:static" onclick="closeModal('modalInventario')">Volver</button>
+    </div>
+    <div class="modal-content split-view">
+        <div class="split-left">
+            <h3>1. Materia Prima</h3>
+            <div class="form-group" style="background:#eee; padding:10px; border-radius:10px">
+                <input type="text" id="invName" placeholder="Nombre Nuevo Material (Ej: Pan)">
+                <input type="number" id="invQty" placeholder="Cantidad Inicial" style="margin-top:5px">
+                <button class="action-btn" style="background:var(--dark); margin-top:5px; padding:10px" onclick="addInventoryItem()">Crear Nuevo Material</button>
+            </div>
+            <table id="inventoryTable">
+                <thead><tr><th>Material</th><th>Ajuste Rápido</th><th>Borrar</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <div class="split-right">
+            <h3>2. Productos de Venta (Menú)</h3>
+            <div class="form-group" style="border: 2px solid var(--primary); padding:10px; border-radius:10px; background:#fff">
+                <h4 style="margin-top:0; color:var(--primary)" id="formTitle">Nuevo Producto</h4>
+                <label for="prodImgInput" class="file-upload-btn">📷 Foto Producto</label>
+                <input type="file" id="prodImgInput" accept="image/*" style="display:none" onchange="previewProdImg(this)">
+                <img id="prodImgPreview" style="width:100px; height:100px; object-fit:cover; display:none; margin:0 auto 10px auto; border-radius:10px;">
+                
+                <input type="hidden" id="editProdId"> <input type="text" id="prodName" placeholder="Nombre Producto">
+                <input type="number" id="prodPrice" placeholder="Precio Venta (Q)" style="margin-top:5px">
+                
+                <label style="margin-top:10px">Ingredientes a descontar:</label>
+                <div id="recipeChecklist" class="recipe-checklist"></div>
+                
+                <div style="display:flex; gap:5px; margin-top:10px">
+                    <button id="btnSaveProd" class="action-btn" style="background:var(--primary); flex:1" onclick="saveProduct()">Guardar</button>
+                    <button id="btnCancelEdit" class="action-btn" style="background:#7f8c8d; display:none" onclick="cancelEdit()">Cancelar</button>
+                </div>
+            </div>
+             
+             <table id="productsTable">
+                <thead><tr><th>Producto</th><th>Precio</th><th>Acciones</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="modalGastos" class="modal">
+    <div class="modal-header">
+        <span>Control de Gastos</span>
+        <button class="menu-btn" style="position:static" onclick="closeModal('modalGastos')">Volver</button>
+    </div>
+    <div class="modal-content split-view">
+        <div class="split-left">
+            <h3>Nuevo Gasto</h3>
+            <div class="form-group">
+                <label>Fecha:</label>
+                <input type="date" id="expenseDate">
+                <input type="text" id="expenseDesc" placeholder="Descripción" style="margin-top:5px">
+                <select id="expenseType" style="margin-top:5px">
+                    <option value="Insumos">Insumos</option>
+                    <option value="Servicios">Servicios</option>
+                    <option value="Personal">Personal</option>
+                    <option value="Otro">Otro</option>
+                </select>
+                <input type="number" id="expenseAmount" placeholder="Monto (Q)" style="margin-top:5px">
+                <button class="action-btn" style="background:#c0392b; margin-top:10px" onclick="addExpense()">Registrar Gasto</button>
+            </div>
+        </div>
+        <div class="split-right">
+            <h3>Historial de Gastos (Hoy)</h3>
+            <div id="expensesList"></div>
+        </div>
+    </div>
+</div>
+
+<div id="modalFiado" class="modal">
+    <div class="modal-header">
+        <span>Control de Fiados</span>
+        <button class="menu-btn" style="position:static" onclick="closeModal('modalFiado')">Volver</button>
+    </div>
+    <div class="modal-content">
+        <h3>Cuentas Pendientes</h3>
+        <table id="creditTable">
+            <thead><tr><th>Fecha</th><th>Cliente</th><th>Monto</th><th>Acción</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<div id="modalHistorial" class="modal">
+    <div class="modal-header">
+        <span>Historial y Cierre</span>
+        <button class="menu-btn" style="position:static" onclick="closeModal('modalHistorial')">Volver</button>
+    </div>
+    <div class="modal-content">
+        <div style="display:flex; gap:10px; margin-bottom:20px;">
+            <button class="menu-btn" style="background:#333; color:white; position:static" onclick="closeDay()">Cerrar Día</button>
+            <button class="menu-btn" style="background:#27ae60; color:white; position:static" onclick="exportToExcel()">Exportar Excel</button>
+        </div>
+
+        <div class="split-view">
+            <div class="split-left">
+                <h3>Resumen Diario (<span id="todayDateLabel"></span>)</h3>
+                <div id="todayStats" style="font-size:1.2rem; margin-bottom:20px"></div>
+                <h4>Ventas Recientes</h4>
+                <div id="salesHistoryList" style="max-height:300px; overflow-y:auto; border:1px solid #ccc;"></div>
+            </div>
+            
+            <div class="split-right" style="display:flex; flex-direction:column;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h3>Gráfica</h3>
+                    <div>
+                        <button class="menu-btn" style="position:static; font-size:0.8rem; background:#eee; color:#333" onclick="setChartMode('daily')">HOY</button>
+                        <button class="menu-btn" style="position:static; font-size:0.8rem; background:#eee; color:#333" onclick="setChartMode('weekly')">SEMANA</button>
+                    </div>
+                </div>
+                
+                <div class="chart-container" id="chartContainer"></div>
+                <div id="netIndicator" class="net-indicator"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- ESTADO Y DATOS ---
+    let DB = { products: [], inventory: [], sales: [], expenses: [], credits: [] };
+    let cart = [];
+    let currentProdImgBase64 = null;
+    let chartMode = 'daily'; 
+    
+    // --- FECHA LOCAL BLINDADA ---
+    const getLocalYMD = (dateObj = new Date()) => {
+        const offset = dateObj.getTimezoneOffset() * 60000;
+        const localTime = new Date(dateObj.getTime() - offset);
+        return localTime.toISOString().split('T')[0];
+    };
+    
+    const getLocalDisplayDate = (dateObj = new Date()) => dateObj.toLocaleDateString('es-GT');
+
+    // --- PERSISTENCIA ---
+    function loadData() {
+        // Intentar cargar v4, si no v3, si no v2
+        let saved = localStorage.getItem('antojableDB_v4');
+        if (!saved) saved = localStorage.getItem('antojableDB_v3');
+        if (!saved) saved = localStorage.getItem('antojableDB_v2'); // Migración
+        
+        if (saved) {
+            DB = JSON.parse(saved);
+        } else {
+             seedData();
+        }
+        renderProducts();
+        updateExpensesList();
+    }
+
+    function saveData() {
+        localStorage.setItem('antojableDB_v4', JSON.stringify(DB));
+    }
+
+    function seedData() {
+        DB.inventory = [{id: 1, name: 'Pan', qty: 20}];
+        DB.products = [{id: 1, name: 'Shuco Ej', price: 15, recipeIds: [1], image: null}];
+        saveData();
+    }
+
+    // --- POS & CARRITO ---
+    function renderProducts() {
+        const grid = document.getElementById('productsGrid');
+        grid.innerHTML = '';
+        DB.products.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            const imgHtml = p.image ? 
+                `<img src="${p.image}" alt="${p.name}">` : 
+                `<div style="height:120px; display:flex; align-items:center; justify-content:center; background:#eee; width:100%; border-radius:10px 10px 0 0; color:#aaa; font-size:3rem">🍔</div>`;
+
+            card.innerHTML = `${imgHtml}<div class="prod-info"><div class="prod-name">${p.name}</div><div class="prod-price">Q${p.price}</div></div>`;
+            card.onclick = () => addToCart(p);
+            grid.appendChild(card);
+        });
+    }
+
+    function addToCart(product) {
+        cart.push({...product, cartId: Date.now()});
+        renderCart();
+    }
+
+    function removeFromCart(cartId) {
+        cart = cart.filter(item => item.cartId !== cartId);
+        renderCart();
+    }
+
+    function renderCart() {
+        const list = document.getElementById('cartList');
+        list.innerHTML = '';
+        let total = 0;
+        cart.forEach(item => {
+            total += parseFloat(item.price);
+            const row = document.createElement('div');
+            row.className = 'cart-item';
+            row.innerHTML = `<span>${item.name}</span><div style="display:flex; align-items:center"><span>Q${item.price}</span><button class="del-btn" onclick="removeFromCart(${item.cartId})">🗑️</button></div>`;
+            list.appendChild(row);
+        });
+        document.getElementById('totalAmount').innerText = `Q${total.toFixed(2)}`;
+        calcChange();
+    }
+
+    function calcChange() {
+        const total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+        const payInput = document.getElementById('payInput').value;
+        const paid = parseFloat(payInput) || 0;
+        const btn = document.getElementById('btnPay');
+        const changeDisplay = document.getElementById('changeDisplay');
+
+        if (total > 0 && paid >= total) {
+            btn.classList.add('active');
+            changeDisplay.innerText = `Cambio: Q${(paid - total).toFixed(2)}`;
+            changeDisplay.style.color = 'var(--green)';
+        } else {
+            btn.classList.remove('active');
+            changeDisplay.innerText = total > 0 ? "Falta dinero" : "Carrito vacío";
+            changeDisplay.style.color = 'red';
+        }
+        return { total, paid };
+    }
+
+    function processPayment(type) {
+        const { total } = calcChange();
+        if (total === 0) return;
+        const now = new Date(); 
+
+        if (type === 'credit') {
+            const client = prompt("Nombre del Cliente (Fiado):");
+            if (!client) return;
+            DB.credits.push({ id: Date.now(), dateIso: now.toISOString(), dateYMD: getLocalYMD(now), clientName: client, total: total, items: [...cart] });
+            alert(`Fiado registrado a ${client}`);
+        } else {
+            // Descontar Inventario
+            let inventoryWarnings = [];
+            cart.forEach(item => {
+                if (item.recipeIds && Array.isArray(item.recipeIds)) {
+                    item.recipeIds.forEach(ingId => {
+                        const material = DB.inventory.find(inv => inv.id == ingId);
+                        if (material) {
+                            material.qty--;
+                            if (material.qty <= 0) inventoryWarnings.push(material.name);
+                        }
+                    });
+                }
+            });
+            inventoryWarnings = [...new Set(inventoryWarnings)];
+            if (inventoryWarnings.length > 0) alert("⚠️ ATENCIÓN: Se agotó: " + inventoryWarnings.join(", "));
+
+            DB.sales.push({ id: Date.now(), dateIso: now.toISOString(), dateYMD: getLocalYMD(now), items: [...cart], total: total, type: 'cash' });
+        }
+        saveData();
+        cart = [];
+        document.getElementById('payInput').value = '';
+        renderCart();
+        if(document.getElementById('modalInventario').style.display === 'flex') renderInventoryTable();
+        alert("¡Venta Exitosa! 🎉");
+    }
+
+    // --- GASTOS ---
+    function addExpense() {
+        let dateVal = document.getElementById('expenseDate').value;
+        if(!dateVal) dateVal = getLocalYMD();
+        const desc = document.getElementById('expenseDesc').value;
+        const type = document.getElementById('expenseType').value;
+        const amount = parseFloat(document.getElementById('expenseAmount').value);
+
+        if (!desc || !amount) return alert("Faltan datos");
+
+        DB.expenses.push({ id: Date.now(), dateYMD: dateVal, desc, type, amount });
+        saveData();
+        updateExpensesList();
+        document.getElementById('expenseDesc').value = '';
+        document.getElementById('expenseAmount').value = '';
+        alert("Gasto Agregado");
+    }
+
+    function updateExpensesList() {
+        const list = document.getElementById('expensesList');
+        list.innerHTML = '';
+        const todayYMD = getLocalYMD();
+        const todayExpenses = DB.expenses.filter(e => e.dateYMD === todayYMD);
+        if(todayExpenses.length === 0) { list.innerHTML = "<i>No hay gastos hoy.</i>"; return; }
+        todayExpenses.forEach(e => {
+            const div = document.createElement('div');
+            div.style.borderBottom = "1px solid #ccc"; div.style.padding = "5px";
+            div.innerHTML = `<b>Q${e.amount}</b> - ${e.desc} <small>(${e.type})</small>`;
+            list.appendChild(div);
+        });
+    }
+
+    // --- INVENTARIO CON BOTONES + / - ---
+    function addInventoryItem() {
+        const name = document.getElementById('invName').value;
+        const qty = parseInt(document.getElementById('invQty').value);
+        if (!name) return;
+        const existing = DB.inventory.find(i => i.name.toLowerCase() === name.toLowerCase());
+        if (existing) { alert("Material ya existe."); return; }
+        DB.inventory.push({ id: Date.now(), name, qty: qty || 0 });
+        saveData();
+        renderInventoryTable();
+        updateRecipeChecklist(); 
+        document.getElementById('invName').value = '';
+        document.getElementById('invQty').value = '';
+    }
+
+    function adjustInv(id, amount) {
+        const item = DB.inventory.find(i => i.id === id);
+        if(item) {
+            item.qty += amount;
+            if(item.qty < 0) item.qty = 0;
+            saveData();
+            // Actualizar solo el número en pantalla para que no parpadee
+            document.getElementById(`qty-${id}`).innerText = item.qty;
+        }
+    }
+
+    function renderInventoryTable() {
+        const tbody = document.querySelector('#inventoryTable tbody');
+        tbody.innerHTML = '';
+        DB.inventory.forEach(i => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${i.name}</td>
+                <td>
+                    <div class="qty-controls">
+                        <button class="qty-btn btn-minus" onclick="adjustInv(${i.id}, -1)">-</button>
+                        <span id="qty-${i.id}" class="qty-display">${i.qty}</span>
+                        <button class="qty-btn btn-plus" onclick="adjustInv(${i.id}, 1)">+</button>
+                    </div>
+                </td>
+                <td><button class="btn-del" onclick="deleteInv(${i.id})">❌</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // --- PRODUCTOS: CREAR Y EDITAR ---
+    function previewProdImg(input) {
+        const preview = document.getElementById('prodImgPreview');
+        const file = input.files[0];
+        if(file) {
+            const reader = new FileReader();
+            reader.onloadend = function() {
+                preview.src = reader.result;
+                preview.style.display = 'block';
+                currentProdImgBase64 = reader.result; 
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // Llenar formulario para EDICIÓN
+    function editProduct(id) {
+        const p = DB.products.find(prod => prod.id === id);
+        if(!p) return;
+        
+        // Cambiar título y botones
+        document.getElementById('formTitle').innerText = "Editando: " + p.name;
+        document.getElementById('btnSaveProd').innerText = "Actualizar Producto";
+        document.getElementById('btnCancelEdit').style.display = 'inline-block';
+        
+        // Llenar datos
+        document.getElementById('editProdId').value = p.id;
+        document.getElementById('prodName').value = p.name;
+        document.getElementById('prodPrice').value = p.price;
+        
+        // Imagen
+        const preview = document.getElementById('prodImgPreview');
+        if(p.image) {
+            preview.src = p.image;
+            preview.style.display = 'block';
+            currentProdImgBase64 = p.image;
+        } else {
+            preview.style.display = 'none';
+            currentProdImgBase64 = null;
+        }
+        
+        // Checkboxes
+        document.querySelectorAll('#recipeChecklist input[type="checkbox"]').forEach(chk => {
+            chk.checked = p.recipeIds && p.recipeIds.includes(parseInt(chk.value));
+        });
+        
+        // Scroll al formulario
+        document.querySelector('.split-right').scrollTop = 0;
+    }
+
+    function cancelEdit() {
+        document.getElementById('formTitle').innerText = "Nuevo Producto";
+        document.getElementById('btnSaveProd').innerText = "Guardar";
+        document.getElementById('btnCancelEdit').style.display = 'none';
+        document.getElementById('editProdId').value = '';
+        document.getElementById('prodName').value = '';
+        document.getElementById('prodPrice').value = '';
+        document.getElementById('prodImgPreview').style.display = 'none';
+        document.getElementById('prodImgInput').value = '';
+        currentProdImgBase64 = null;
+        document.querySelectorAll('#recipeChecklist input[type="checkbox"]').forEach(c => c.checked = false);
+    }
+
+    function saveProduct() {
+        const idStr = document.getElementById('editProdId').value;
+        const name = document.getElementById('prodName').value;
+        const price = parseFloat(document.getElementById('prodPrice').value);
+        
+        const selectedRecipes = [];
+        document.querySelectorAll('#recipeChecklist input[type="checkbox"]:checked').forEach(checkbox => {
+            selectedRecipes.push(parseInt(checkbox.value));
+        });
+        
+        if (!name || !price) { alert("Falta nombre o precio"); return; }
+        
+        if (idStr) {
+            // ACTUALIZAR EXISTENTE
+            const index = DB.products.findIndex(p => p.id == idStr);
+            if(index !== -1) {
+                DB.products[index].name = name;
+                DB.products[index].price = price;
+                DB.products[index].recipeIds = selectedRecipes;
+                if(currentProdImgBase64) DB.products[index].image = currentProdImgBase64;
+                alert("Producto Actualizado ✅");
+            }
+        } else {
+            // CREAR NUEVO
+            DB.products.push({ 
+                id: Date.now(), name, price, recipeIds: selectedRecipes, image: currentProdImgBase64 
+            });
+            alert("Producto Guardado ✅");
+        }
+        
+        saveData();
+        renderProductsTable();
+        renderProducts(); 
+        cancelEdit(); // Reset form
+    }
+
+    function renderProductsTable() {
+        const tbody = document.querySelector('#productsTable tbody');
+        tbody.innerHTML = '';
+        DB.products.forEach(p => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${p.name}</td>
+                <td>Q${p.price}</td>
+                <td>
+                    <button class="btn-edit" onclick="editProduct(${p.id})">✏️</button>
+                    <button class="btn-del" onclick="deleteProduct(${p.id})">🗑️</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function updateRecipeChecklist() {
+        const container = document.getElementById('recipeChecklist');
+        container.innerHTML = '';
+        if(DB.inventory.length === 0) { container.innerHTML = "<i>Primero agrega Materia Prima.</i>"; return; }
+        DB.inventory.forEach(i => {
+            const label = document.createElement('label');
+            label.innerHTML = `<input type="checkbox" value="${i.id}"> ${i.name}`;
+            container.appendChild(label);
+        });
+    }
+    
+    function deleteProduct(id) {
+        if(!confirm("¿Borrar este producto del menú?")) return;
+        DB.products = DB.products.filter(p => p.id !== id);
+        saveData();
+        renderProductsTable();
+        renderProducts();
+    }
+    
+    function deleteInv(id) {
+         if(!confirm("¿Borrar este ingrediente?")) return;
+         DB.inventory = DB.inventory.filter(i => i.id !== id);
+         DB.products.forEach(p => { if(p.recipeIds) p.recipeIds = p.recipeIds.filter(rId => rId !== id); });
+         saveData();
+         renderInventoryTable();
+         updateRecipeChecklist();
+    }
+
+    // --- HISTORIAL & GRÁFICAS ---
+    function setChartMode(mode) {
+        chartMode = mode;
+        calcStats();
+    }
+
+    function calcStats() {
+        const todayYMD = getLocalYMD();
+        document.getElementById('todayDateLabel').innerText = getLocalDisplayDate();
+        
+        const salesToday = DB.sales.filter(s => s.dateYMD === todayYMD);
+        const expensesToday = DB.expenses.filter(e => e.dateYMD === todayYMD);
+        const totalSalesToday = salesToday.reduce((sum, s) => sum + s.total, 0);
+        const totalExpToday = expensesToday.reduce((sum, e) => sum + e.amount, 0);
+        const netToday = totalSalesToday - totalExpToday;
+
+        document.getElementById('todayStats').innerHTML = `Venta: Q${totalSalesToday.toFixed(2)} | Gasto: Q${totalExpToday.toFixed(2)} | <b>Neto: Q${netToday.toFixed(2)}</b>`;
+        
+        const list = document.getElementById('salesHistoryList');
+        list.innerHTML = '';
+        salesToday.sort((a,b) => new Date(b.dateIso) - new Date(a.dateIso));
+        salesToday.forEach(s => {
+            const timeStr = new Date(s.dateIso).toLocaleTimeString('es-GT', {hour: '2-digit', minute:'2-digit'});
+            const d = document.createElement('div');
+            d.style.padding = "5px"; d.style.borderBottom="1px solid #eee";
+            d.innerHTML = `${timeStr} - <b>Q${s.total}</b>`;
+            list.appendChild(d);
+        });
+
+        // Gráfica Logic
+        const chartContainer = document.getElementById('chartContainer');
+        chartContainer.innerHTML = ''; 
+        let dataPoints = [];
+        if (chartMode === 'daily') {
+            dataPoints.push({ label: 'HOY', sales: totalSalesToday, exp: totalExpToday });
+        } else {
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date(); d.setDate(d.getDate() - i);
+                const ymd = getLocalYMD(d);
+                const dayLabel = d.toLocaleDateString('es-GT', {weekday:'short'}); 
+                const sDay = DB.sales.filter(s => s.dateYMD === ymd).reduce((sum, s) => sum + s.total, 0);
+                const eDay = DB.expenses.filter(e => e.dateYMD === ymd).reduce((sum, e) => sum + e.amount, 0);
+                dataPoints.push({ label: dayLabel, sales: sDay, exp: eDay });
+            }
+        }
+
+        let maxVal = 100;
+        dataPoints.forEach(dp => { if(dp.sales > maxVal) maxVal = dp.sales; if(dp.exp > maxVal) maxVal = dp.exp; });
+
+        dataPoints.forEach(dp => {
+            const group = document.createElement('div');
+            group.className = 'bar-group';
+            const salesH = (dp.sales / maxVal) * 100;
+            const expH = (dp.exp / maxVal) * 100;
+            let salesClass = 'bar-green';
+            if(dp.sales > 500) salesClass = 'bar-blue';
+            if(dp.sales < 100 && dp.sales > 0) salesClass = 'bar-red';
+
+            group.innerHTML = `<div style="display:flex; width:100%; height:100%; align-items:flex-end; gap:2px"><div class="bar ${salesClass}" style="height:${salesH}%" title="Venta: Q${dp.sales}"></div><div class="bar bar-red" style="height:${expH}%" title="Gasto: Q${dp.exp}"></div></div><span style="font-size:0.7rem; margin-top:5px">${dp.label}</span>`;
+            chartContainer.appendChild(group);
+        });
+        
+        const indicator = document.getElementById('netIndicator');
+        if (netToday >= 0) { indicator.innerHTML = `<span class="arrow-up">⬆</span> Ganancia Hoy Q${netToday.toFixed(2)}`; } 
+        else { indicator.innerHTML = `<span class="arrow-down">⬇</span> Pérdida Hoy Q${netToday.toFixed(2)}`; }
+    }
+
+    function closeDay() { if(confirm("¿Cerrar el día?")) alert("Día cerrado. ¡Buen descanso! 🌙"); }
+
+    function exportToExcel() {
+        let csvContent = "data:text/csv;charset=utf-8,Fecha,Hora,Tipo,Descripcion,Monto\n";
+        const allMovements = [
+            ...DB.sales.map(s => ({...s, category: 'VENTA', desc: `Venta ID ${s.id}`, dateIso: s.dateIso})),
+            ...DB.expenses.map(e => ({...e, category: 'GASTO', desc: `${e.type} - ${e.desc}`, total: -e.amount, dateIso: e.dateYMD + 'T12:00:00.000Z'}))
+        ];
+        allMovements.sort((a,b) => new Date(a.dateIso) - new Date(b.dateIso));
+        allMovements.forEach(m => {
+             const dateObj = new Date(m.dateIso);
+             csvContent += `${dateObj.toLocaleDateString('es-GT')},${dateObj.toLocaleTimeString('es-GT')},${m.category},${m.desc},${m.total.toFixed(2)}\n`;
+        });
+        const link = document.createElement("a");
+        link.setAttribute("href", encodeURI(csvContent));
+        link.setAttribute("download", `reporte_ventas_${getLocalYMD()}.csv`);
+        document.body.appendChild(link);
+        link.click();
+    }
+
+    // --- NAVIGATION ---
+    function openMenu() { document.getElementById('modalMenu').style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function openSection(id) {
+        closeModal('modalMenu');
+        document.getElementById(id).style.display = 'flex';
+        if(id === 'modalInventario') { renderInventoryTable(); renderProductsTable(); updateRecipeChecklist(); cancelEdit(); }
+        if(id === 'modalFiado') renderCredits();
+        if(id === 'modalHistorial') setChartMode('daily');
+        if(id === 'modalGastos') { document.getElementById('expenseDate').value = getLocalYMD(); updateExpensesList(); }
+    }
+
+    document.getElementById('expenseDate').value = getLocalYMD();
+    loadData();
+
+</script>
+</body>
+</html>
